@@ -1,0 +1,100 @@
+№1
+
+
+
+
+import random
+
+class Pet:
+    def __init__(self, name, species):
+        self.name = name
+        self.species = species
+        self.hunger = 0
+        self.happiness = 100
+        self.energy = 100
+
+    def feed(self):
+        self.hunger -= 10
+        self.happiness += 5
+
+    def play(self):
+        self.happiness += 10
+        self.energy -= 5
+
+    def sleep(self):
+        self.energy += 10
+
+    def live_a_day(self):
+        self.hunger += 5
+        self.happiness -= 5
+        self.energy -= 5
+
+        if self.hunger > 80:
+            print(f"{self.name} очень голоден!")
+        if self.happiness < 20:
+            print(f"{self.name} грустит.")
+        if self.energy < 20:
+            print(f"{self.name} очень устал.")
+
+    def status(self):
+        print(f"Имя: {self.name}")
+        print(f"Вид: {self.species}")
+        print(f"Голод: {self.hunger}")
+        print(f"Счастье: {self.happiness}")
+        print(f"Энергия: {self.energy}")
+
+# Пример использования:
+my_cat = Pet("Барсик", "кот")
+for day in range(1, 31):
+    print(f"День {day}")
+    my_cat.live_a_day()
+    my_cat.feed()
+    my_cat.play()
+    my_cat.sleep()
+    my_cat.status()
+
+
+
+
+
+
+
+№2
+
+
+lass Student:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+        self.money = 100
+        self.grades = 5
+        self.is_working = False
+        self.is_studying = False
+
+    def work(self):
+        self.money += 50
+        self.is_working = True
+        print(f"{self.name} устроился на работу.")
+
+    def study(self):
+        self.grades += 1
+        self.is_studying = True
+        print(f"{self.name} начал усердно учиться.")
+
+    def rest(self):
+        self.money -= 10
+        self.is_working = False
+        self.is_studying = False
+        print(f"{self.name} решил отдохнуть.")
+
+    def live_a_year(self):
+        for month in range(12):
+            print(f"Месяц {month+1}")
+            # Здесь реализуйте логику принятия решений студентом
+            # Например:
+            if self.money < 50:
+                self.work()
+            elif self.grades < 3:
+                self.study()
+            else:
+                self.rest()
