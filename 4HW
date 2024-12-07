@@ -1,0 +1,48 @@
+#1)
+class Vehicle:
+    def __init__(self, brand, model):
+        self.brand = brand
+        self.model = model
+
+    def start(self):
+        print(f"{self.brand} {self.model} is starting.")
+
+class Engine:
+    def __init__(self, horsepower, fuel_type):
+        self.horsepower = horsepower
+        self.fuel_type = fuel_type
+
+    def ignite(self):
+        print(f"Engine ignited. Horsepower: {self.horsepower}")
+
+class Car(Vehicle, Engine):
+    def __init__(self, brand, model, horsepower, fuel_type, num_doors):
+        Vehicle.__init__(self, brand, model)
+        Engine.__init__(self, horsepower, fuel_type)
+        self.num_doors = num_doors
+
+    def drive(self):
+        self.start()
+        self.ignite()
+        print(f"Driving a {self.num_doors}-door {self.brand} {self.model}")
+
+# Example usage:
+my_car = Car("Toyota", "Camry", 180, "Gasoline", 4)
+my_car.drive()
+
+
+#2)
+import random
+
+class EncryptedNumber:
+    def __init__(self, number):
+        self.number = number
+        self.operation = random.choice(["+", "-", "*", "/"])
+
+    def __str__(self):
+        result = eval(f"{self.number} {self.operation} {random.randint(1, 10)}")
+        return str(result)
+
+# Example usage:
+secret_number = EncryptedNumber(42)
+print(secret_number)
