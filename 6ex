@@ -1,0 +1,27 @@
+import sys
+
+result = []
+def divider(a, b):
+    try:
+        if a < b:
+            raise ValueError("Делимое меньше делителя")
+        if b > 100:
+            raise IndexError("Делитель больше 100")
+        return a/b
+    except (ValueError, IndexError) as e:
+        print(f"Произошла ошибка: {e}")
+        # Для более детальной информации о типе исключения:
+        print(f"Тип исключения: {type(e).__name__}")
+        # Для отладки можно вывести стек вызовов:
+        import traceback
+        traceback.print_exc()
+
+data = {10: 2, 2: 5, "123": 4, 18: 0, []: 15, 8 : 4}
+for key in data:
+    try:
+        res = divider(key, data[key])
+        result.append(res)
+    except TypeError:
+        print(f"Ключ или значение не являются числами: {key}, {data[key]}")
+
+print(result)
