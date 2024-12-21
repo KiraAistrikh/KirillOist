@@ -1,0 +1,41 @@
+class GeneratorGenerator:
+    def __init__(self, start, step):
+        self.start = start
+        self.step = step
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        def generator():
+            current = self.start
+            while True:
+                yield current
+                current += self.step
+        self.start += self.step
+        return generator()
+generator_factory = GeneratorGenerator(0, 2)
+
+for gen in generator_factory:
+    print(next(gen))  # Выведет 0, 2, 4, 6, ...
+    print(next(gen))  # Выведет 2, 4, 6, 8, ...
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+def error_handler(func):
+    def inner(expression):
+        try:
+            result = func(expression)
+            return result
+        except SyntaxError:
+            return "Синтаксическая ошибка в выражении"
+        except ZeroDivisionError:
+            return "Деление на ноль"
+        except NameError:
+            return "Неизвестная переменная"
+        except Exception as e:
+            return f"Произошла непредвиденная ошибка: {str(e)}"
+    return inner
+
+@error_handler
+def calculate(expression):
+    return eval(expression)
+    
