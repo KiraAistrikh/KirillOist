@@ -1,0 +1,48 @@
+import requests
+from bs4 import BeautifulSoup
+
+class CurrencyConverter:
+    def __init__(self, url):
+        self.url = url
+        self.usd_rate = self.get_usd_rate()
+
+    def get_usd_rate(self):
+        try:
+            response = requests.get(self.url)
+            response.raise_for_status()  # Проверка статуса ответа
+
+            soup = BeautifulSoup(response.text, 'html.parser')
+
+            # Более общий XPath для поиска элемента с курсом
+            usd_rate_element = soup.find('div', class_='usd-rate')  # Замените 'usd-rate' на подходящий класс
+
+            if usd_rate_element:
+                usd_rate = float(usd_rate_element.text.replace(',', '.'))
+                return usd_rate
+            else:
+                print("Не удалось найти курс доллара на странице.")
+                return None
+        except requests.exceptions.RequestException as e:
+            print(f"Ошибка при запросе к серверу: {e}")
+            return None
+
+    def convert(self, local_currency):
+        if self.usd_rate:
+            return local_currency / self.usd_rate
+        else:
+            print("Курс доллара не найден. Конвертация невозможна.")
+            return None
+
+# Замените на актуальный URL
+url = 'https://www.bcc.kz/personal/currency-rates/'
+converter = CurrencyConverter(url)
+
+while True:
+    try:
+        amount = float(input("Введите сумму в вашей валюте: "))
+        usd_amount = converter.convert(amount)
+        if usd_amount:
+            print(f"{amount} вашей валюты равно {usd_amount} долларам США.")
+        break
+    except ValueError:
+        print("Некорректный ввод. Пожалуйста, введите число.")
