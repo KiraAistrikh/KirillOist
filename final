@@ -1,0 +1,135 @@
+mport sqlite3
+
+# Создаем подключение к базе данных SQLite
+conn = sqlite3.connect('bank_system.db')
+cursor = conn.cursor()
+
+# Создаем таблицу пользователей, если она не существует
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS users (
+    user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    balance REAL DEFAULT 0.0
+)
+''')
+conn.commit()
+
+def register_user(username):
+    cursor.execute('''
+    INSERT INTO users (username) VALUES (?)
+    ''', (username,))
+    conn.commit()
+    print(f"Пользователь {username} успешно зарегистрирован!")
+
+def deposit_money(username, amount):  # Define the deposit_money function
+    if amount <= 0:
+        print("Сумма должна быть больше нуля.")
+        return
+    cursor.execute('''
+    SELECT balance FROM users WHERE username = ?
+    ''', (username,))
+    result = cursor.fetchone()
+    if result:
+        cursor.execute('''
+        UPDATE users SET balance = balance + ? WHERE username = ?
+        ''', (amount, username))
+        conn.commit()
+        print(f"{amount} рублей успешно добавлены на ваш счет.")
+    else:
+        print("Пользователь не найден.")
+        
+def check_balance(username):
+    cursor.execute('''
+    SELECT balance FROM users WHERE username = ?
+    ''', (username,))
+    result = cursor.fetchone()
+    if result:
+        print(f"Ваш текущий баланс: {result[0]} рублей.")
+    else:
+        print("Пользователь не найден.")
+
+def withdraw_money(username, amount):
+    if amount <= 0:
+        print("Сумма должна быть больше нуля.")
+        return
+    cursor.execute('''
+    SELECT balance FROM users WHERE username = ?
+    ''', (username,))
+    result = cursor.fetchone()
+    if result:
+        balance = result[0]
+        if balance >= amount:
+            cursor.execute('''
+            UPDATE users SET balance = balance - ? WHERE username = ?
+            ''', (amount, username))
+            conn.commit()
+            print(f"{amount} рублей успешно сняты с вашего счета.")
+        else:
+            print("Недостаточно средств на счете.")
+    else:
+        print("Пользователь не найден.")
+
+def clear_account(username):
+    cursor.execute('''
+    UPDATE users SET balance = 0 WHERE username = ?
+    ''', (username,))
+    conn.commit()
+    print("Ваш счет был очищен.")
+
+def deposit_money(username, amount):
+    if amount <= 0:
+        print("Сумма должна быть больше нуля.")
+        return
+    
+    cursor.execute('''
+    UPDATE users SET balance = balance + ? WHERE username = ?
+    ''', (amount, username))
+    conn.commit()
+    print(f"{amount} рублей успешно добавлены на ваш счет.")
+
+def exit_bank():
+    # Added code block to the exit_bank function
+    print("Выход из системы.")
+    conn.close()
+
+def main():
+    print("Добро пожаловать в банк!")
+    username = input("Введите ваше имя для регистрации или входа: ")
+    
+    # Проверим, существует ли пользователь
+    cursor.execute('''
+    SELECT * FROM users WHERE username = ?
+    ''', (username,))
+    result = cursor.fetchone()
+    if not result:
+        print(f"Пользователь {username} не найден. Регистрируем...")
+        register_user(username)
+    
+    while True:
+        print("\nМеню:")
+        print("1. Вложить деньги")
+        print("2. Узнать баланс")
+        print("3. Снять деньги")
+        print("4. Очистить счет")
+        print("5. Выйти из банка")
+        
+        choice = input("Выберите опцию: ")
+        
+        if choice == '1':
+            amount = float(input("Введите сумму для депозита: "))
+            deposit_money(username, amount)
+        elif choice == '2':
+            check_balance(username)
+        elif choice == '3':
+            amount = float(input("Введите сумму для снятия: "))
+            withdraw_money(username, amount)
+        elif choice == '4':
+            clear_account(username)
+        elif choice == '5':
+            exit_bank()
+            break
+        else:
+            print("Неверный выбор. Попробуйте снова.")
+
+if __name__ == "__main__":
+    main()
